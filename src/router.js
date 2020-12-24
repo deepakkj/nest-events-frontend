@@ -1,18 +1,30 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Event from "@/Event";
-import Events from "@/Events";
+import EventList from "@/EventList";
+import Login from "@/Login";
+import Register from "@/Register";
 
 const routes = [
 	{
 		path: "/",
-		name: "Events",
-		component: Events,
+		name: "event-list",
+		component: EventList,
 	},
 	{
 		path: "/event/:id",
-		name: "Event",
+		name: "event",
 		component: Event,
 	},
+    {
+        path: "/login",
+        name: "login",
+        component: Login
+    },
+    {
+        path: "/register",
+        name: "register",
+        component: Register
+    }
 ];
 
 const router = createRouter({
