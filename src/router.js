@@ -5,16 +5,16 @@ import Login from "@/Login";
 import Register from "@/Register";
 
 const routes = [
-	{
-		path: "/",
-		name: "event-list",
-		component: EventList,
-	},
-	{
-		path: "/event/:id",
-		name: "event",
-		component: Event,
-	},
+    {
+        path: "/",
+        name: "event-list",
+        component: EventList,
+    },
+    {
+        path: "/event/:id",
+        name: "event",
+        component: Event,
+    },
     {
         path: "/login",
         name: "login",
@@ -28,8 +28,8 @@ const routes = [
 ];
 
 const router = createRouter({
-	history: createWebHistory(),
-	routes,
+    history: createWebHistory(),
+    routes,
 });
 
 export default router;

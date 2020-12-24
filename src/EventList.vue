@@ -11,9 +11,13 @@
       </div>
     </div>
     <div class="col-span-6">
-      <div v-if="events">
+      <div v-if="!events && loading">
+        <Loader class="mb-3" v-for="index in 10" :key="index"></Loader>
+      </div>
+
+      <div v-if="events && !loading">
         <EventOnList class="mb-3" v-for="event in events.data" :event="event" :key="event.id"></EventOnList>
-        <div class="mt-2 mb-6 mr-4 flex justify-end">
+        <div class="mt-2 mb-6 mr-4 flex justify-end" v-if="events.data.length">
           <nav class="inline-flex shadow-sm text-xs font-semibold -space-x-px">
             <router-link :to="{ route: 'Events', query: {page: Math.max(1, page - 1)}}" href="#"
                          class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50">«
@@ -30,6 +34,15 @@
           </nav>
         </div>
       </div>
+
+      <div v-if="!loading && (!events || !events.data?.length)" class="flex justify-center">
+        <div class="h-48 w-1/2 text-indigo-800 text-center">
+          <div class="text-indigo-800 text-xl">Unfortunately we don't have anything for you</div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
     </div>
     <div class="col-span-3"></div>
   </div>
@@ -37,25 +50,32 @@
 
 <script>
 import EventOnList from "./components/EventOnList";
+import Loader from "./components/Loader";
 import {computed, ref} from "@vue/reactivity";
-import axios from 'axios';
+import api from "@/api";
 import Time from "@/components/Time";
 import {watch} from "@vue/runtime-core";
 import {useRoute} from "vue-router";
 
 export default {
   name: "EventList",
-  components: {EventOnList, Time},
+  components: {EventOnList, Loader, Time},
   setup() {
     const loading = ref(null);
-    const events = ref([]);
+    const events = ref(null);
     const time = ref(1);
     const route = useRoute();
     const page = computed(() => Number(route.query.page || 1));
 
     const fetchEvents = async () => {
+      events.value = null;
       loading.value = true;
-      events.value = (await axios.get(`/events?when=${time.value}&page=${page.value}`)).data;
+
+      try {
+        events.value = (await api.get(`/events?when=${time.value}&page=${page.value}`)).data;
+      } finally {
+        loading.value = false;
+      }
     }
 
     watch(time, (v, p) => v !== p ? fetchEvents() : null);

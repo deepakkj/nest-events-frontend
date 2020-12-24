@@ -28,8 +28,8 @@
 
 <script>
 import {ref} from "@vue/reactivity";
-import axios from "axios";
 import {useUserContext} from "./composables/user";
+import api from "@/api";
 
 export default {
   name: "Login",
@@ -41,8 +41,9 @@ export default {
 
     const {user, setUser} = useUserContext();
     const signIn = async () => {
-      const token = (await axios.post(`/auth/login`, credentials.value)).data;
+      const token = (await api.post(`/auth/login`, credentials.value)).data;
       setUser(token);
+      api.defaults.headers.authorization = `Bearer ${token.token}`;
     }
 
     return {credentials, signIn, user, setUser};
