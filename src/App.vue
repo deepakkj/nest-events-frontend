@@ -6,7 +6,7 @@
       </div>
       <div>
         <router-link :to="{name: 'login'}" class="ml-2">Login</router-link>
-        <router-link :to="{name: 'login'}" class="ml-2">Register</router-link>
+        <router-link :to="{name: 'register'}" class="ml-2">Register</router-link>
       </div>
     </div>
   </div>

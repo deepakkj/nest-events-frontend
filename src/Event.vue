@@ -4,7 +4,7 @@
       <Loader v-for="index in 4" :key="index" class="mt-3"></Loader>
     </div>
     <div v-if="event && !loading.event">
-      <div class="bg-white mr-4 p-4 shadow text-sm" v-if="event">
+      <div class="bg-white mr-4 p-4 shadow text-sm rounded-sm" v-if="event">
         <div class="font-semibold text-lg">
           {{ event.name }}
         </div>
@@ -17,24 +17,16 @@
           </div>
           <div>{{ event.when }}</div>
         </div>
-        <div class="text-gray-500 flex items-center">
-          <div class="h-4 w-4 mr-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <div>{{ event.address }}</div>
-        </div>
+        <EventAddress :address="event.address"></EventAddress>
       </div>
 
-      <div class="bg-white mr-4 p-4 shadow mt-3 text-sm">
+      <div class="bg-white mr-4 p-4 shadow mt-3 text-sm rounded-sm">
         <div>{{ event.attendeeAccepted }} Going · {{ event.attendeeMaybe }}
           Interested · {{ event.attendeeRejected }} Not Interested
         </div>
       </div>
 
-      <div class="bg-white mr-4 shadow mt-3" v-if="!loading.attendance">
+      <div class="bg-white mr-4 shadow mt-3 rounded-sm" v-if="!loading.attendance">
         <div class="p-4">Are you going?</div>
         <div class="border-b"></div>
         <div class="p-4">
@@ -64,19 +56,19 @@
         <Loader></Loader>
       </div>
 
-      <div class="bg-white mr-4 shadow mt-3">
+      <div class="bg-white mr-4 shadow mt-3 rounded-sm">
         <div class="p-4">Details</div>
         <div class="border-b"></div>
         <div class="text-gray-500 text-xs p-4">{{ event.description }}</div>
       </div>
 
-      <div class="bg-white mr-4 shadow mt-3">
+      <div class="bg-white mr-4 shadow mt-3 rounded-sm">
         <div class="p-4">Hosted by</div>
         <div class="border-b"></div>
         <div class="text-gray-500 text-xs p-4">{{ event.organizer.username }}</div>
       </div>
 
-      <div class="bg-white mr-4 shadow mt-3">
+      <div class="bg-white mr-4 shadow mt-3 rounded-sm">
         <div v-if="userEvents && !loading.userEvents">
           <div class="p-4">More events by {{ event.organizer.username }}</div>
           <div class="border-b"></div>
@@ -104,10 +96,11 @@ import api from "./api";
 import {useRoute} from "vue-router";
 import {watch} from "@vue/runtime-core";
 import Loader from "./components/Loader";
+import EventAddress from "@/components/EventAddress";
 
 export default {
   name: "Event",
-  components: {Loader},
+  components: {Loader, EventAddress},
   setup() {
     const loading = ref({
       event: false,
