@@ -1,9 +1,8 @@
 <template>
   <div class="flex justify-center">
-    <div class="bg-white mr-4 p-4 shadow text-sm rounded-sm max-w-xl w-full">
+    <div class="bg-white mr-4 shadow text-sm rounded-sm max-w-xl w-full">
       <form @submit.prevent="register">
-        <div class="grid grid-cols-6 gap-6">
-
+        <div class="grid grid-cols-6 gap-6 p-5">
           <div class="col-span-3">
             <label for="firstName" class="block text-sm font-medium text-gray-700">First name</label>
             <input type="text" id="firstName" v-model="userData.firstName"
@@ -33,15 +32,12 @@
             <input type="password" id="retypePassword" v-model="userData.retypedPassword"
                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
           </div>
-
-          <div class="col-span-6 flex justify-end">
-            <button
-                class="outline-none focus:outline-none bg-indigo-700 text-white border border-indigo-200 py-2 px-4 rounded-md text-sm font-semibold">
-              Register
-            </button>
-          </div>
-
         </div>
+
+        <div class="col-span-6 flex justify-end bg-gray-100 p-5">
+          <ButtonSubmitIndigo label="Register"></ButtonSubmitIndigo>
+        </div>
+
       </form>
     </div>
   </div>
@@ -51,9 +47,11 @@
 import api from "@/api";
 import {ref} from "@vue/reactivity";
 import {useRouter} from "vue-router";
+import ButtonSubmitIndigo from "@/components/ButtonSubmitIndigo";
 
 export default {
   name: "Register",
+  components: {ButtonSubmitIndigo},
   setup() {
     const router = useRouter();
     const userData = ref({

@@ -19,10 +19,7 @@
           </div>
 
           <div class="pt-8">
-            <button type="submit"
-                    class="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Sign in
-            </button>
+            <ButtonSubmitIndigo label="Sign in" class="w-full"></ButtonSubmitIndigo>
           </div>
         </div>
       </form>
@@ -34,9 +31,11 @@
 import {ref} from "@vue/reactivity";
 import {useUserContext} from "./composables/user";
 import api from "@/api";
+import ButtonSubmitIndigo from "@/components/ButtonSubmitIndigo";
 
 export default {
   name: "Login",
+  components: {ButtonSubmitIndigo},
   setup() {
     const credentials = ref({
       username: null,
