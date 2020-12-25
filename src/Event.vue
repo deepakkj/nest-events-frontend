@@ -8,8 +8,24 @@
         <div class="font-semibold text-lg">
           {{ event.name }}
         </div>
-        <div>{{ event.when }}</div>
-        <div class="text-gray-500">{{ event.address }}</div>
+        <div class="flex items-center">
+          <div class="h-4 w-4 mr-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>{{ event.when }}</div>
+        </div>
+        <div class="text-gray-500 flex items-center">
+          <div class="h-4 w-4 mr-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div>{{ event.address }}</div>
+        </div>
       </div>
 
       <div class="bg-white mr-4 p-4 shadow mt-3 text-sm">
@@ -32,19 +48,19 @@
             <button
                 :class="{'bg-indigo-600': attendance && attendance.answer == 2, 'text-white': attendance && attendance.answer == 2}"
                 @click="storeAttendanceAnswer(2)"
-                class="outline-none focus:outline-none bg-gray-100 hover:bg-gray-50 border border-gray-300 py-1 px-2 text-sm font-semibold">
+                class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 text-sm font-semibold">
               Maybe
             </button>
             <button
                 :class="{'bg-indigo-600': attendance && attendance.answer == 3, 'text-white': attendance && attendance.answer == 3}"
                 @click="storeAttendanceAnswer(3)"
-                class="outline-none focus:outline-none bg-gray-100 hover:bg-gray-50 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold">
+                class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold">
               Not interested
             </button>
           </div>
         </div>
       </div>
-      <div v-if="!attendance && loading.attendance" class="mt-3">
+      <div v-if="loading.attendance" class="mt-3">
         <Loader></Loader>
       </div>
 
@@ -74,7 +90,7 @@
           </div>
         </div>
 
-        <div v-if="!userEvents && loading.userEvents">
+        <div v-if="loading.userEvents">
           <Loader></Loader>
         </div>
       </div>
@@ -153,10 +169,10 @@ export default {
       loading.value.attendance = true;
 
       try {
-        attendance.value = await api.post(`/events/${event.value.id}/attendance`, {
+        attendance.value = (await api.put(`/events/${event.value.id}/attendance`, {
           name: 'XXX',
           answer
-        });
+        })).data;
       } catch (e) {
         attendance.value = null;
       } finally {
