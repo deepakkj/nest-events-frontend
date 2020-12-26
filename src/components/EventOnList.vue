@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white mr-4 p-4 text-sm rounded-sm">
     <div class="font-semibold text-lg">
-      <router-link :to="{name: 'event', params: {id:event.id}}">{{ event.name }}</router-link>
+      <router-link :to="{name: 'event', params: {id: event.id}}">{{ event.name }}</router-link>
     </div>
     <div class="flex items-center">
       <div class="h-4 w-4 mr-1">
@@ -10,10 +10,10 @@
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
         </svg>
       </div>
-      <div>Mon 7:30 PM UTC+01</div>
+      <div>{{ event.when }}</div>
     </div>
     <EventAddress :address="event.address"></EventAddress>
-    <div class="text-gray-500 flex items-center">
+    <div class="text-gray-500 flex items-center" v-if="event.attendeeCount">
       <div class="h-4 w-4 mr-1">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -22,8 +22,11 @@
       </div>
       <div>{{ event.attendeeCount }} people</div>
     </div>
-    <div class="border-b mt-2 mb-2"></div>
-    <div class="text-gray-500 text-xs">{{ event.description }}</div>
+    <div v-if="event.description">
+      <div class="border-b mt-4 mb-4"></div>
+      <div class="text-gray-500 text-xs">{{ event.description }}</div>
+    </div>
+    <slot></slot>
   </div>
 </template>
 

@@ -18,29 +18,7 @@
       <div v-if="events && !loading">
         <EventOnList class="mb-3" v-for="event in events.data" :event="event" :key="event.id"></EventOnList>
         <div class="mt-2 mb-6 mr-4 flex justify-end" v-if="events.data.length">
-          <nav class="inline-flex text-xs font-semibold -space-x-px">
-            <router-link :to="{ route: 'Events', query: {page: Math.max(1, page - 1)}}" href="#"
-                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-l-md">
-              <div class="h-4 w-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
-                </svg>
-              </div>
-            </router-link>
-            <router-link v-for="p in [...Array(10).keys()].map(e => e + page)" :key="p"
-                         :to="{ route: 'Events', query: {page: p}}" href="#"
-                         class="flex bg-white justify-center items-center justify-items-center w-10 border border-gray-300 text-gray-700 hover:bg-gray-50">
-              {{ p }}
-            </router-link>
-            <router-link :to="{ route: 'Events', query: {page: page + 1}}" href="#"
-                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-r-md">
-              <div class="h-4 w-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </div>
-            </router-link>
-          </nav>
+          <Pagination :page="page"></Pagination>
         </div>
       </div>
 
@@ -69,10 +47,11 @@ import api from "@/api";
 import Time from "@/components/Time";
 import {watch} from "@vue/runtime-core";
 import {useRoute} from "vue-router";
+import Pagination from "@/components/Pagination";
 
 export default {
   name: "EventList",
-  components: {EventOnList, Loader, Time},
+  components: {EventOnList, Loader, Time, Pagination},
   setup() {
     const loading = ref(null);
     const events = ref(null);
@@ -83,7 +62,6 @@ export default {
     const fetchEvents = async () => {
       events.value = null;
       loading.value = true;
-
       try {
         events.value = (await api.get(`/events?when=${time.value}&page=${page.value}`)).data;
       } finally {

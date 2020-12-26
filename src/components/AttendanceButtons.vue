@@ -1,22 +1,22 @@
 <template>
   <div class="flex -space-x-px text-gray-600 items-center" v-if="!loading.attendance">
     <button
-        :class="{'bg-indigo-600 hover:bg-indigo-400 text-white border-indigo-300': attendance && attendance.answer === 1}"
+        :class="{'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-300': attendance && attendance.answer === 1}"
         @click="storeAttendanceAnswer(1)"
         class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-l-sm text-sm font-semibold hover:bg-gray-50">
       Going
     </button>
     <button
-        :class="{'bg-indigo-600 hover:bg-indigo-400 text-white border-indigo-300': attendance && attendance.answer === 2}"
+        :class="{'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-300': attendance && attendance.answer === 2}"
         @click="storeAttendanceAnswer(2)"
         class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 text-sm font-semibold hover:bg-gray-50">
       Maybe
     </button>
     <button
-        :class="{'bg-indigo-600 hover:bg-indigo-400 text-white border-indigo-300': attendance && attendance.answer === 3}"
+        :class="{'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-300': attendance && attendance.answer === 3}"
         @click="storeAttendanceAnswer(3)"
         class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold hover:bg-gray-50">
-      Not interested
+      Nope
     </button>
     <div v-if="loading.attendanceStore">
       <SpinLoader class="text-indigo-700 ml-2" :show="true"></SpinLoader>

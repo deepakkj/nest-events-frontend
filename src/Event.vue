@@ -46,7 +46,7 @@
         <div class="text-gray-500 text-xs p-4">{{ event.organizer.username }}</div>
       </div>
 
-      <div class="bg-white mr-4 mt-3 rounded-sm">
+      <div class="bg-white mr-4 mt-3 rounded-sm mb-3">
         <div v-if="userEvents && !loading.userEvents">
           <div class="p-4">More events by {{ event.organizer.username }}</div>
           <div class="border-b"></div>
