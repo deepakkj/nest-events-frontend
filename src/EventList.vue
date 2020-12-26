@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 max-w-2xl">
     <div class="col-span-3">
       <div class="font-bold text-gray-700 uppercase mb-2">Time</div>
       <div class="text-sm">
@@ -10,17 +10,17 @@
         <Time label="Next Week" :value="5" @clicked="time=5" :active="time"></Time>
       </div>
     </div>
-    <div class="col-span-6">
+    <div class="col-span-9">
       <div v-if="!events && loading">
-        <Loader class="mb-3" v-for="index in 10" :key="index"></Loader>
+        <Loader class="mb-3 p-4" v-for="index in 10" :key="index"></Loader>
       </div>
 
       <div v-if="events && !loading">
         <EventOnList class="mb-3" v-for="event in events.data" :event="event" :key="event.id"></EventOnList>
         <div class="mt-2 mb-6 mr-4 flex justify-end" v-if="events.data.length">
-          <nav class="inline-flex shadow-sm text-xs font-semibold -space-x-px">
+          <nav class="inline-flex text-xs font-semibold -space-x-px">
             <router-link :to="{ route: 'Events', query: {page: Math.max(1, page - 1)}}" href="#"
-                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50">
+                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-l-md">
               <div class="h-4 w-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
@@ -33,7 +33,7 @@
               {{ p }}
             </router-link>
             <router-link :to="{ route: 'Events', query: {page: page + 1}}" href="#"
-                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50">
+                         class="bg-white px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-r-md">
               <div class="h-4 w-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>

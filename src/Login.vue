@@ -19,7 +19,7 @@
           </div>
 
           <div class="pt-8">
-            <ButtonSubmitIndigo label="Sign in" class="w-full"></ButtonSubmitIndigo>
+            <ButtonSubmitIndigo label="Sign in" :loading="loading" class="w-full"></ButtonSubmitIndigo>
           </div>
         </div>
       </form>
@@ -32,6 +32,7 @@ import {ref} from "@vue/reactivity";
 import {useUserContext} from "./composables/user";
 import api from "@/api";
 import ButtonSubmitIndigo from "@/components/ButtonSubmitIndigo";
+import {useRouter} from "vue-router";
 
 export default {
   name: "Login",
@@ -41,15 +42,24 @@ export default {
       username: null,
       password: null
     });
-
+    const loading = ref(false);
     const {user, setUser} = useUserContext();
+    const router = useRouter();
+
     const signIn = async () => {
-      const token = (await api.post(`/auth/login`, credentials.value)).data;
-      setUser(token);
-      api.defaults.headers.authorization = `Bearer ${token.token}`;
+      loading.value = true;
+
+      try {
+        const token = (await api.post(`/auth/login`, credentials.value)).data;
+        setUser(token);
+        api.defaults.headers.authorization = `Bearer ${token.token}`;
+        await router.push({name: 'event-list'});
+      } finally {
+        loading.value = false;
+      }
     }
 
-    return {credentials, signIn, user, setUser};
+    return {credentials, signIn, user, setUser, loading};
   }
 }
 </script>

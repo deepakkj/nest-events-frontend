@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center">
-    <div class="bg-white mr-4 shadow text-sm rounded-sm max-w-xl w-full">
+    <div class="bg-white mr-4 text-sm rounded-sm max-w-xl w-full">
       <div v-if="errors.length" class="bg-red-50 p-5 flex rounded-t-sm">
         <div class="w-8 h-8 mr-4 text-red-700">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,7 +52,7 @@
         </div>
 
         <div class="col-span-6 flex justify-end bg-gray-100 p-5 rounded-b-sm">
-          <ButtonSubmitIndigo label="Register"></ButtonSubmitIndigo>
+          <ButtonSubmitIndigo label="Register" :loading="loading"></ButtonSubmitIndigo>
         </div>
 
       </form>
@@ -79,9 +79,10 @@ export default {
       lastName: null
     });
     const errors = ref([]);
+    const loading = ref(false);
     const register = async () => {
       errors.value = [];
-
+      loading.value = true;
       try {
         (await api.post(`/users`, userData.value)).data;
         await router.push({name: 'event-list'});
@@ -89,10 +90,12 @@ export default {
         if (400 === e.response?.status) {
           errors.value = e.response.data.message;
         }
+      } finally {
+        loading.value = false;
       }
     }
 
-    return {userData, register, errors};
+    return {userData, register, errors, loading};
   }
 }
 </script>
