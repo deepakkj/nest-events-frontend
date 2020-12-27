@@ -1,5 +1,6 @@
 <template>
-  <div class="xl:w-3/5 w-4/6 mt-3">
+  <div class="xl:w-3/5 w-4/6 mt-3 mx-auto">
+    <Breadcrumbs :links="links"></Breadcrumbs>
     <div v-if="!event && loading.event">
       <Loader v-for="index in 4" :key="index" class="mt-3 p-4"></Loader>
     </div>
@@ -77,10 +78,11 @@ import Loader from "./components/Loader";
 import EventAddress from "@/components/EventAddress";
 import {useUserContext} from "@/composables/user";
 import AttendanceButtons from "@/components/AttendanceButtons";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default {
   name: "Event",
-  components: {Loader, EventAddress, AttendanceButtons},
+  components: {Loader, EventAddress, AttendanceButtons, Breadcrumbs},
   setup() {
     const loading = ref({
       event: false,
@@ -127,7 +129,14 @@ export default {
       userEventsOtherThanThis,
       fetchEvent,
       fetchUserEvents,
-      user
+      user,
+      links: [
+        {
+          label: 'Event',
+          route: 'event',
+          params: route.params.id
+        }
+      ]
     };
   },
   async created() {

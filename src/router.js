@@ -4,6 +4,7 @@ import EventList from "@/EventList";
 import Login from "@/Login";
 import Register from "@/Register";
 import Account from "@/components/Account";
+import CreateEvent from "@/CreateEvent";
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: "/account",
         name: "account",
         component: Account
+    },
+    {
+        path: "/account/create-event",
+        name: "account-create-event",
+        component: CreateEvent
     }
 ];
 
