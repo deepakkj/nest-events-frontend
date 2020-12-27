@@ -7,12 +7,13 @@
 
     <div class="grid grid-cols-12" v-if="!loading.attendedEvents">
       <div class="col-span-4 mb-3" v-for="event in attendedEventsWithoutDesc" :key="event.id">
-        <EventOnList :event="event">
+        <EventOnList :event="event" class="h-full">
           <div class="border-b mt-4 mb-4"></div>
           <AttendanceButtons :event-id="event.id"></AttendanceButtons>
         </EventOnList>
       </div>
     </div>
+
     <div class="grid grid-cols-12" v-if="loading.attendedEvents">
       <div class="col-span-4" v-for="index in 3" :key="index">
         <Loader class="mb-3 p-4 mr-4"></Loader>
