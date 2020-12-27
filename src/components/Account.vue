@@ -12,6 +12,7 @@
           <AttendanceButtons :event-id="event.id"></AttendanceButtons>
         </EventOnList>
       </div>
+      <Pagination :page="1"></Pagination>
     </div>
 
     <div class="grid grid-cols-12" v-if="loading.attendedEvents">
@@ -60,10 +61,11 @@ import {useUserContext} from "@/composables/user";
 import Loader from "@/components/Loader";
 import RequestFailed from "@/components/RequestFailed";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Pagination from "@/components/Pagination";
 
 export default {
   name: "Account",
-  components: {EventOnList, AttendanceButtons, Loader, RequestFailed, Breadcrumbs},
+  components: {EventOnList, AttendanceButtons, Loader, RequestFailed, Breadcrumbs, Pagination},
   setup() {
     const organizedEvents = ref(null);
     const attendedEvents = ref(null);

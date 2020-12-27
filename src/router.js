@@ -5,6 +5,7 @@ import Login from "@/Login";
 import Register from "@/Register";
 import Account from "@/components/Account";
 import CreateEvent from "@/CreateEvent";
+import EditEvent from "@/EditEvent";
 
 const routes = [
     {
@@ -36,6 +37,11 @@ const routes = [
         path: "/account/create-event",
         name: "account-create-event",
         component: CreateEvent
+    },
+    {
+        path: "/account/edit-event/:id",
+        name: "account-edit-event",
+        component: EditEvent
     }
 ];
 
