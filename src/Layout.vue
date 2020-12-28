@@ -22,9 +22,15 @@ import {useUserContext} from "@/composables/user";
 export default {
   name: "Layout",
   setup() {
-    const {user} = useUserContext();
+    const {user, setUser} = useUserContext();
+    return {user, setUser};
+  },
+  created() {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    return {user};
+    if (storedUser) {
+      this.setUser(storedUser);
+    }
   }
 }
 </script>

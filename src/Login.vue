@@ -52,7 +52,6 @@ export default {
       try {
         const token = (await api.post(`/auth/login`, credentials.value)).data;
         setUser(token);
-        api.defaults.headers.authorization = `Bearer ${token.token}`;
         await router.push({name: 'event-list'});
       } finally {
         loading.value = false;

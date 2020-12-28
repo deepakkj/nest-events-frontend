@@ -1,4 +1,4 @@
-<template xmlns:AttendanceButtons="http://www.w3.org/1999/html">
+<template>
   <div>
     <Breadcrumbs :links="links"></Breadcrumbs>
 
@@ -12,7 +12,9 @@
           <AttendanceButtons :event-id="event.id"></AttendanceButtons>
         </EventOnList>
       </div>
-      <Pagination :page="1"></Pagination>
+      <div class="col-span-12 flex">
+        <Pagination :page="1" route="account" page-parameter="attendedPage" :other-parameters="{organizedPage}" next-label="Next" prev-label="Previous"></Pagination>
+      </div>
     </div>
 
     <div class="grid grid-cols-12" v-if="loading.attendedEvents">
@@ -39,6 +41,9 @@
         <div class="col-span-4 mb-3" v-for="event in organizedEventsWithoutDesc" :key="event.id">
           <EventOnList :event="event"></EventOnList>
         </div>
+        <div class="col-span-12 flex">
+          <Pagination :page="1" route="account" page-parameter="organizedPage" :other-parameters="{attendedPage}" next-label="Next" prev-label="Previous"></Pagination>
+        </div>
       </div>
 
       <div class="grid grid-cols-12" v-if="loading.organizedEvents">
@@ -62,6 +67,8 @@ import Loader from "@/components/Loader";
 import RequestFailed from "@/components/RequestFailed";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Pagination from "@/components/Pagination";
+import {useRoute} from "vue-router";
+import {watch} from "@vue/runtime-core";
 
 export default {
   name: "Account",
@@ -80,13 +87,22 @@ export default {
         () => (attendedEvents.value || []).map(e => ({...e, description: null}))
     );
     const {user} = useUserContext();
+    const route = useRoute();
+    const organizedPage = computed(() => Number(route.query.organizedPage) || 1);
+    const attendedPage = computed(() => Number(route.query.attendedPage) || 1);
+    watch(
+        organizedPage, async (c, p) => c !== p && c ? await fetchOrganizedEvents(c) : null
+    );
+    watch(
+        attendedPage, async (c, p) => c !== p && c ? await fetchAttendedEvents(c) : null
+    );
 
-    const fetchOrganizedEvents = async () => {
+    const fetchOrganizedEvents = async (page = 1) => {
       organizedEvents.value = null;
       loading.value.organizedEvents = true;
       try {
         if (user.value.userId) {
-          organizedEvents.value = (await api.get(`/user-events/${user.value.userId}`)).data.data;
+          organizedEvents.value = (await api.get(`/user-events/${user.value.userId}?page=${page}`)).data.data;
         }
       } catch (e) {
         organizedEvents.value = null;
@@ -94,11 +110,11 @@ export default {
         loading.value.organizedEvents = false;
       }
     }
-    const fetchAttendedEvents = async () => {
+    const fetchAttendedEvents = async (page = 1) => {
       attendedEvents.value = null;
       loading.value.attendedEvents = true;
       try {
-        attendedEvents.value = (await api.get(`/events-attendance`)).data.data;
+        attendedEvents.value = (await api.get(`/events-attendance?page=${page}`)).data.data;
       } catch (e) {
         attendedEvents.value = null;
       } finally {
@@ -115,6 +131,8 @@ export default {
       organizedEvents,
       organizedEventsWithoutDesc,
       attendedEventsWithoutDesc,
+      attendedPage,
+      organizedPage,
       links: [
         {
           label: 'Account',
@@ -126,7 +144,8 @@ export default {
   },
   async created() {
     await Promise.all([
-      this.fetchOrganizedEvents(), this.fetchAttendedEvents()
+      this.fetchOrganizedEvents(this.organizedPage),
+      this.fetchAttendedEvents(this.attendedPage)
     ]);
   }
 }

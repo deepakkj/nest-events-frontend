@@ -18,7 +18,7 @@
       <div v-if="events && !loading">
         <EventOnList class="mb-3" v-for="event in events.data" :event="event" :key="event.id"></EventOnList>
         <div class="mt-2 mb-6 mr-4 flex justify-end" v-if="events.data.length">
-          <Pagination :page="page"></Pagination>
+          <Pagination :page="page" route="event-list"></Pagination>
         </div>
       </div>
 
