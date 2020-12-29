@@ -3,7 +3,7 @@ import Event from "@/Event";
 import EventList from "@/EventList";
 import Login from "@/Login";
 import Register from "@/Register";
-import Account from "@/components/Account";
+import Account from "@/Account";
 import CreateEvent from "@/CreateEvent";
 import EditEvent from "@/EditEvent";
 

@@ -2,15 +2,16 @@ import {inject, provide, ref} from "vue";
 import api from "@/api";
 
 const USER_CONTEXT = Symbol();
+let user;
+
+export const setUser = (payload) => {
+    user.value = payload;
+    localStorage.setItem('user', JSON.stringify(payload));
+    api.defaults.headers.authorization = `Bearer ${payload.token}`;
+}
 
 export function useUserProvider(initial = {userId: null, token: null}) {
-    const user = ref(initial);
-    const setUser = (payload) => {
-        user.value = payload;
-        localStorage.setItem('user', JSON.stringify(payload));
-        api.defaults.headers.authorization = `Bearer ${payload.token}`;
-    }
-
+    user = ref(initial);
     provide(USER_CONTEXT, {user, setUser});
 }
 

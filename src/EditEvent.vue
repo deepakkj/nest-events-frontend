@@ -1,44 +1,47 @@
 <template>
-  <div class="max-w-xl mx-auto">
+  <div class="max-w-xl w-full mx-auto mb-4">
     <Breadcrumbs :links="links"></Breadcrumbs>
-  </div>
 
-  <div class="bg-white text-sm rounded-sm max-w-xl w-full mx-auto mb-4">
-    <Errors :errors="errors"></Errors>
-    <form @submit.prevent="createEvent">
-      <div class="grid grid-cols-6 gap-6 p-5">
-        <div class="col-span-6">
-          <label for="name" class="block text-sm font-medium text-gray-700">Event name</label>
-          <input type="text" id="name" v-model="eventData.name"
-                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-        </div>
+    <Loader v-if="efLoading" class="p-4" :blocks="5"></Loader>
 
-        <div class="col-span-6">
-          <label for="description" class="block text-sm font-medium text-gray-700">Event description</label>
-          <textarea id="description" v-model="eventData.description"
-                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md h-32">
+    <div class="bg-white text-sm rounded-sm w-full mb-4" v-if="!efLoading">
+      <Errors :errors="esErrors"></Errors>
+
+      <form @submit.prevent="updateEvent">
+        <div class="grid grid-cols-6 gap-6 p-5">
+          <div class="col-span-6">
+            <label for="name" class="block text-sm font-medium text-gray-700">Event name</label>
+            <input type="text" id="name" v-model="eventData.name" :disabled="efLoading"
+                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+          </div>
+
+          <div class="col-span-6">
+            <label for="description" class="block text-sm font-medium text-gray-700">Event description</label>
+            <textarea id="description" v-model="eventData.description" :disabled="efLoading"
+                      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md h-32">
             </textarea>
-        </div>
+          </div>
 
-        <div class="col-span-6">
-          <label for="address" class="block text-sm font-medium text-gray-700">Event address</label>
-          <textarea id="address" v-model="eventData.address"
-                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+          <div class="col-span-6">
+            <label for="address" class="block text-sm font-medium text-gray-700">Event address</label>
+            <textarea id="address" v-model="eventData.address" :disabled="efLoading"
+                      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
             </textarea>
+          </div>
+
+          <div class="col-span-3">
+            <label for="when" class="block text-sm font-medium text-gray-700">When does the event happen</label>
+            <input type="datetime-local" id="when" v-model="eventData.when" :disabled="efLoading"
+                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+          </div>
         </div>
 
-        <div class="col-span-3">
-          <label for="when" class="block text-sm font-medium text-gray-700">When does the event happen</label>
-          <input type="datetime-local" id="when" v-model="eventData.when"
-                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <div class="col-span-6 flex justify-end bg-gray-100 p-5 rounded-b-sm">
+          <ButtonSubmitIndigo label="Save Changes" :loading="false"></ButtonSubmitIndigo>
         </div>
-      </div>
 
-      <div class="col-span-6 flex justify-end bg-gray-100 p-5 rounded-b-sm">
-        <ButtonSubmitIndigo label="Create" :loading="loading"></ButtonSubmitIndigo>
-      </div>
-
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -46,37 +49,42 @@
 import ButtonSubmitIndigo from "@/components/ButtonSubmitIndigo";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Errors from "@/components/Errors";
-import {useRouter} from "vue-router";
-import {ref} from "@vue/reactivity";
+import {useRoute, useRouter} from "vue-router";
+import {reactive} from "@vue/reactivity";
 import api from "@/api";
+import Loader from "@/components/Loader";
+import {useEventSaving} from "@/composables/eventSaving";
+import {useEventFetching} from "@/composables/eventFetching";
 
 export default {
   name: "EditEvent",
-  components: {ButtonSubmitIndigo, Breadcrumbs, Errors},
-  setup() {
+  components: {ButtonSubmitIndigo, Breadcrumbs, Errors, Loader},
+  async setup() {
     const router = useRouter();
-    const eventData = ref({
+    const route = useRoute();
+    const eventData = reactive({
       name: null,
       description: null,
       address: null,
       when: null
     });
-    const errors = ref([]);
-    const loading = ref(false);
-    const createEvent = async () => {
-      errors.value = [];
-      loading.value = true;
-      try {
-        const event = (await api.post(`/events`, eventData.value)).data;
-        await router.push({name: 'event', params: {id: event.id}});
-      } catch (e) {
-        if (400 === e.response?.status) {
-          errors.value = e.response.data.message;
-        }
-      } finally {
-        loading.value = false;
-      }
+    const {esLoading, esErrors, storeEvent} = useEventSaving(api);
+    const {efLoading, fetchEvent} = useEventFetching(api);
+
+    const updateEvent = async () => {
+      await storeEvent(eventData.value, route.params.id);
+      await router.back();
     }
+
+    const fetchTheEvent = async () => {
+      const response = await fetchEvent(route.params.id);
+      eventData.name = response.name;
+      eventData.description = response.description;
+      eventData.when = response.when;
+      eventData.address = response.address;
+    }
+
+    await fetchTheEvent();
 
     return {
       links: [
@@ -86,16 +94,13 @@ export default {
           params: {}
         },
         {
-          label: 'Create Event',
+          label: 'Edit Event',
           route: 'account-create-event',
           params: {}
         }
       ],
-      eventData,
-      createEvent,
-      loading,
-      errors
+      eventData, fetchTheEvent, updateEvent, esErrors, esLoading, efLoading
     }
-  }
+  },
 }
 </script>

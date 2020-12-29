@@ -5,14 +5,14 @@
     <h1 class="text-2xl text-gray-800 mr-4">Events you attend</h1>
     <div class="border-b border-gray-300 mt-4 mb-4 mr-4"></div>
 
-    <div class="grid grid-cols-12" v-if="!loading.attendedEvents">
+    <div class="grid grid-cols-12" v-if="!loading.attendedEvents && attendedEvents">
       <div class="col-span-4 mb-3" v-for="event in attendedEventsWithoutDesc" :key="event.id">
         <EventOnList :event="event" class="h-full">
           <div class="border-b mt-4 mb-4"></div>
           <AttendanceButtons :event-id="event.id"></AttendanceButtons>
         </EventOnList>
       </div>
-      <div class="col-span-12 flex">
+      <div class="col-span-12">
         <Pagination :page="1" route="account" page-parameter="attendedPage" :other-parameters="{organizedPage}" next-label="Next" prev-label="Previous"></Pagination>
       </div>
     </div>
@@ -39,9 +39,21 @@
     <div class="mb-3">
       <div class="grid grid-cols-12" v-if="!loading.organizedEvents && organizedEvents">
         <div class="col-span-4 mb-3" v-for="event in organizedEventsWithoutDesc" :key="event.id">
-          <EventOnList :event="event"></EventOnList>
+          <EventOnList :event="event">
+            <div class="border-b mt-4 mb-4"></div>
+            <div class="flex -space-x-px text-gray-600 items-center">
+              <router-link :to="{name: 'account-edit-event', params: { id: event.id }}"
+                 class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-l-sm text-sm font-semibold hover:bg-gray-50">
+                Edit
+              </router-link>
+              <a href="#"
+                 class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold hover:bg-gray-50">
+                Delete
+              </a>
+            </div>
+          </EventOnList>
         </div>
-        <div class="col-span-12 flex">
+        <div class="col-span-12">
           <Pagination :page="1" route="account" page-parameter="organizedPage" :other-parameters="{attendedPage}" next-label="Next" prev-label="Previous"></Pagination>
         </div>
       </div>
