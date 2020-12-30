@@ -2,7 +2,7 @@
   <div class="max-w-xl w-full mx-auto mb-4">
     <Breadcrumbs :links="links"></Breadcrumbs>
 
-    <div class="bg-white text-sm rounded-sm w-full mb-4">
+    <div class="bg-white text-sm rounded-sm w-full mb-4 border border-indigo-200">
       <Errors :errors="esErrors"></Errors>
       <form @submit.prevent="createEvent">
         <div class="grid grid-cols-6 gap-6 p-5">

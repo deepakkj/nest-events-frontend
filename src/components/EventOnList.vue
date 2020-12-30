@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white mr-4 p-4 text-sm rounded-sm">
+  <div class="bg-white mr-4 p-4 text-sm rounded-sm border border-indigo-200">
     <div class="font-semibold text-lg">
       <router-link :to="{name: 'event', params: {id: event.id}}">{{ event.name }}</router-link>
     </div>

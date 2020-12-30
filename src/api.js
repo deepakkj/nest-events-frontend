@@ -15,7 +15,7 @@ api.interceptors.response.use(
                 token: null
             })
         }
-        return error;
+        throw error;
     }
 );
 

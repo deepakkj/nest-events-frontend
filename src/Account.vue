@@ -5,7 +5,7 @@
     <h1 class="text-2xl text-gray-800 mr-4">Events you attend</h1>
     <div class="border-b border-gray-300 mt-4 mb-4 mr-4"></div>
 
-    <div class="grid grid-cols-12" v-if="!loading.attendedEvents && attendedEvents">
+    <div class="grid grid-cols-12" v-if="false === loading.attendedEvents && null !== attendedEvents">
       <div class="col-span-4 mb-3" v-for="event in attendedEventsWithoutDesc" :key="event.id">
         <EventOnList :event="event" class="h-full">
           <div class="border-b mt-4 mb-4"></div>
@@ -13,17 +13,18 @@
         </EventOnList>
       </div>
       <div class="col-span-12">
-        <Pagination :page="1" route="account" page-parameter="attendedPage" :other-parameters="{organizedPage}" next-label="Next" prev-label="Previous"></Pagination>
+        <Pagination :page="1" route="account" page-parameter="attendedPage" :other-parameters="{organizedPage}"
+                    next-label="Next" prev-label="Previous"></Pagination>
       </div>
     </div>
 
-    <div class="grid grid-cols-12" v-if="loading.attendedEvents">
+    <div class="grid grid-cols-12" v-if="true === loading.attendedEvents || null === loading.attendedEvents">
       <div class="col-span-4" v-for="index in 3" :key="index">
         <Loader class="mb-3 p-4 mr-4"></Loader>
       </div>
     </div>
 
-    <RequestFailed v-if="!loading.attendedEvents && attendedEvents === null"></RequestFailed>
+    <RequestFailed v-if="false === loading.attendedEvents && null === attendedEvents"></RequestFailed>
 
     <div class="flex justify-between items-center mt-6 mr-4">
       <h1 class="text-2xl text-gray-800">Events you organize</h1>
@@ -37,34 +38,36 @@
     <div class="border-b border-gray-300 mt-4 mb-4 mr-4"></div>
 
     <div class="mb-3">
-      <div class="grid grid-cols-12" v-if="!loading.organizedEvents && organizedEvents">
+      <div class="grid grid-cols-12" v-if="false === loading.organizedEvents && null !== organizedEvents">
         <div class="col-span-4 mb-3" v-for="event in organizedEventsWithoutDesc" :key="event.id">
           <EventOnList :event="event">
             <div class="border-b mt-4 mb-4"></div>
             <div class="flex -space-x-px text-gray-600 items-center">
               <router-link :to="{name: 'account-edit-event', params: { id: event.id }}"
-                 class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-l-sm text-sm font-semibold hover:bg-gray-50">
+                           class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-l-sm text-sm font-semibold hover:bg-gray-50">
                 Edit
               </router-link>
               <a href="#"
-                 class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold hover:bg-gray-50">
+                 class="outline-none focus:outline-none bg-red-50 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold hover:bg-gray-50">
                 Delete
               </a>
             </div>
           </EventOnList>
         </div>
+
         <div class="col-span-12">
-          <Pagination :page="1" route="account" page-parameter="organizedPage" :other-parameters="{attendedPage}" next-label="Next" prev-label="Previous"></Pagination>
+          <Pagination :page="1" route="account" page-parameter="organizedPage" :other-parameters="{attendedPage}"
+                      next-label="Next" prev-label="Previous"></Pagination>
         </div>
       </div>
 
-      <div class="grid grid-cols-12" v-if="loading.organizedEvents">
-        <div class="col-span-4" v-for="index in 3" :key="index">
+      <div class="grid grid-cols-12" v-if="true === loading.organizedEvents || null === loading.organizedEvents">
+        <div class="col-span-4" v-for="index in 6" :key="index">
           <Loader class="mb-3 p-4 mr-4"></Loader>
         </div>
       </div>
 
-      <RequestFailed v-if="!loading.organizedEvents && organizedEvents === null"></RequestFailed>
+      <RequestFailed v-if="false === loading.organizedEvents && null === organizedEvents"></RequestFailed>
     </div>
   </div>
 </template>
@@ -89,8 +92,8 @@ export default {
     const organizedEvents = ref(null);
     const attendedEvents = ref(null);
     const loading = ref({
-      organizedEvents: false,
-      attendedEvents: false
+      organizedEvents: null,
+      attendedEvents: null
     });
     const organizedEventsWithoutDesc = computed(
         () => (organizedEvents.value || []).map(e => ({...e, description: null}))
@@ -110,8 +113,7 @@ export default {
     );
 
     const fetchOrganizedEvents = async (page = 1) => {
-      organizedEvents.value = null;
-      loading.value.organizedEvents = true;
+      const t = setTimeout(() => loading.value.organizedEvents = true, null === organizedEvents ? 1 : 1000);
       try {
         if (user.value.userId) {
           organizedEvents.value = (await api.get(`/user-events/${user.value.userId}?page=${page}`)).data.data;
@@ -119,25 +121,27 @@ export default {
       } catch (e) {
         organizedEvents.value = null;
       } finally {
+        clearTimeout(t);
         loading.value.organizedEvents = false;
       }
     }
     const fetchAttendedEvents = async (page = 1) => {
-      attendedEvents.value = null;
-      loading.value.attendedEvents = true;
+      const t = setTimeout(() => loading.value.attendedEvents = true, null === attendedEvents ? 1 : 1000);
       try {
         attendedEvents.value = (await api.get(`/events-attendance?page=${page}`)).data.data;
       } catch (e) {
         attendedEvents.value = null;
       } finally {
+        clearTimeout(t);
         loading.value.attendedEvents = false;
       }
     }
 
+    fetchAttendedEvents(attendedPage.value);
+    fetchOrganizedEvents(organizedPage.value);
+
     return {
       loading,
-      fetchOrganizedEvents,
-      fetchAttendedEvents,
       user,
       attendedEvents,
       organizedEvents,
@@ -153,12 +157,6 @@ export default {
         }
       ]
     }
-  },
-  async created() {
-    await Promise.all([
-      this.fetchOrganizedEvents(this.organizedPage),
-      this.fetchAttendedEvents(this.attendedPage)
-    ]);
   }
 }
 </script>

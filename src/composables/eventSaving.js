@@ -20,6 +20,6 @@ export function useEventSaving(api) {
     return {
         esLoading: readonly(esLoading),
         storeEvent,
-        esErrors
+        esErrors: readonly(esErrors)
     };
 }

@@ -5,7 +5,7 @@
       <Loader v-for="index in 4" :key="index" class="mt-3 p-4"></Loader>
     </div>
     <div v-if="event && !loading.event">
-      <div class="bg-white mr-4 p-4 text-sm rounded-sm" v-if="event">
+      <div class="bg-white mr-4 p-4 text-sm rounded-sm border border-indigo-200" v-if="event">
         <div class="font-semibold text-lg">
           {{ event.name }}
         </div>
@@ -21,13 +21,13 @@
         <EventAddress :address="event.address"></EventAddress>
       </div>
 
-      <div class="bg-white mr-4 p-4 mt-3 text-sm rounded-sm">
-        <div>{{ event.attendeeAccepted }} Going · {{ event.attendeeMaybe }}
-          Interested · {{ event.attendeeRejected }} Not Interested
+      <div class="bg-white mr-4 p-4 mt-3 text-sm rounded-sm border border-indigo-200">
+        <div><span class="text-green-900">{{ event.attendeeAccepted }} Going</span> · <span class="text-gray-900">{{ event.attendeeMaybe }}
+          Interested</span> · <span class="text-red-900">{{ event.attendeeRejected }} Not Interested</span>
         </div>
       </div>
 
-      <div class="bg-white mr-4 mt-3 rounded-sm" v-if="user.userId">
+      <div class="bg-white mr-4 mt-3 rounded-sm border border-indigo-200" v-if="user.userId">
         <div class="p-4">Are you going?</div>
         <div class="border-b"></div>
         <div class="p-4">
@@ -35,19 +35,19 @@
         </div>
       </div>
 
-      <div class="bg-white mr-4 mt-3 rounded-sm">
+      <div class="bg-white mr-4 mt-3 rounded-sm border border-indigo-200">
         <div class="p-4">Details</div>
         <div class="border-b"></div>
         <div class="text-gray-500 text-xs p-4">{{ event.description }}</div>
       </div>
 
-      <div class="bg-white mr-4 mt-3 rounded-sm">
+      <div class="bg-white mr-4 mt-3 rounded-sm border border-indigo-200">
         <div class="p-4">Hosted by</div>
         <div class="border-b"></div>
         <div class="text-gray-500 text-xs p-4">{{ event.organizer.username }}</div>
       </div>
 
-      <div class="bg-white mr-4 mt-3 rounded-sm mb-3">
+      <div class="bg-white mr-4 mt-3 rounded-sm mb-3 border border-indigo-200">
         <div v-if="userEvents && !loading.userEvents">
           <div class="p-4">More events by {{ event.organizer.username }}</div>
           <div class="border-b"></div>
@@ -99,11 +99,11 @@ export default {
     watch(() => Number(route.params.id), (curr, prev) => curr !== prev && curr ? fetchEvent() : null);
 
     const fetchEvent = async () => {
-      event.value = null;
-      loading.value.event = true;
+      const t = setTimeout(() => loading.value.event = true, 1000);
       try {
         event.value = (await api.get(`/events/${route.params.id}`)).data;
       } finally {
+        clearTimeout(t);
         loading.value.event = false;
       }
       if (event.value) {

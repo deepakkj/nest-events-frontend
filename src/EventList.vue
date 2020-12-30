@@ -11,18 +11,18 @@
       </div>
     </div>
     <div class="col-span-9">
-      <div v-if="!events && loading">
+      <div v-if="loading.indicator">
         <Loader class="mb-3 p-4" v-for="index in 10" :key="index"></Loader>
       </div>
 
-      <div v-if="events && !loading">
+      <div v-if="events && !loading.process">
         <EventOnList class="mb-3" v-for="event in events.data" :event="event" :key="event.id"></EventOnList>
         <div class="mt-2 mb-6 mr-4 flex justify-end" v-if="events.data.length">
           <Pagination :page="page" route="event-list"></Pagination>
         </div>
       </div>
 
-      <div v-if="!loading && (!events || !events.data?.length)">
+      <div v-if="!loading.process && (!events || !events.data?.length)">
         <RequestFailed></RequestFailed>
       </div>
     </div>
@@ -45,19 +45,24 @@ export default {
   name: "EventList",
   components: {EventOnList, Loader, Time, Pagination, RequestFailed},
   setup() {
-    const loading = ref(null);
+    const loading = ref({
+      indicator: false,
+      process: false
+    });
     const events = ref(null);
     const time = ref(1);
     const route = useRoute();
     const page = computed(() => Number(route.query.page || 1));
 
     const fetchEvents = async () => {
-      events.value = null;
-      loading.value = true;
+      loading.value.process = true;
+      const t = setTimeout(() => loading.value.indicator = true, 1000);
       try {
         events.value = (await api.get(`/events?when=${time.value}&page=${page.value}`)).data;
       } finally {
-        loading.value = false;
+        clearTimeout(t);
+        loading.value.process = false;
+        loading.value.indicator = false;
       }
     }
 
