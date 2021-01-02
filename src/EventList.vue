@@ -1,14 +1,18 @@
 <template>
   <div class="grid grid-cols-12 max-w-2xl">
     <div class="col-span-3">
-      <div class="font-bold text-gray-700 uppercase mb-2">Time</div>
-      <div class="text-sm">
-        <Time label="All" :value="1" @clicked="time=1" :active="time"></Time>
-        <Time label="Today" :value="2" @clicked="time=2" :active="time"></Time>
-        <Time label="Tomorrow" :value="3" @clicked="time=3" :active="time"></Time>
-        <Time label="This Week" :value="4" @clicked="time=4" :active="time"></Time>
-        <Time label="Next Week" :value="5" @clicked="time=5" :active="time"></Time>
+      <div class="sticky top-2">
+
+        <div class="font-bold text-gray-700 uppercase mb-2">Time</div>
+        <div class="text-sm">
+          <Time label="All" :value="1" @clicked="time=1" :active="time"></Time>
+          <Time label="Today" :value="2" @clicked="time=2" :active="time"></Time>
+          <Time label="Tomorrow" :value="3" @clicked="time=3" :active="time"></Time>
+          <Time label="This Week" :value="4" @clicked="time=4" :active="time"></Time>
+          <Time label="Next Week" :value="5" @clicked="time=5" :active="time"></Time>
+        </div>
       </div>
+
     </div>
     <div class="col-span-9">
       <div v-if="loading.indicator">
@@ -69,10 +73,9 @@ export default {
     watch(time, (v, p) => v !== p ? fetchEvents() : null);
     watch(page, (v, p) => v !== p ? fetchEvents() : null);
 
+    fetchEvents();
+
     return {loading, events, time, page, fetchEvents};
-  },
-  async created() {
-    await this.fetchEvents();
   }
 }
 </script>

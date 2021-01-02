@@ -2,7 +2,7 @@
   <div>
     <Breadcrumbs :links="links"></Breadcrumbs>
 
-    <h1 class="text-2xl text-gray-800 mr-4">Events you attend</h1>
+    <h1 class="text-2xl text-gray-700 mr-4">Events you attend</h1>
     <div class="border-b border-gray-300 mt-4 mb-4 mr-4"></div>
 
     <div class="grid grid-cols-12" v-if="false === loading.attendedEvents && null !== attendedEvents">
@@ -27,7 +27,7 @@
     <RequestFailed v-if="false === loading.attendedEvents && null === attendedEvents"></RequestFailed>
 
     <div class="flex justify-between items-center mt-6 mr-4">
-      <h1 class="text-2xl text-gray-800">Events you organize</h1>
+      <h1 class="text-2xl text-gray-700">Events you organize</h1>
       <div>
         <router-link :to="{name: 'account-create-event'}"
                      class="bg-indigo-600 hover:bg-indigo-500 outline-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white border-transparent py-2 px-4 rounded-md shadow-sm font-semibold inline-flex justify-center">
@@ -47,10 +47,10 @@
                            class="outline-none focus:outline-none bg-gray-100 border border-gray-300 py-1 px-2 rounded-l-sm text-sm font-semibold hover:bg-gray-50">
                 Edit
               </router-link>
-              <a href="#"
+              <button @click="removeEvent(event)"
                  class="outline-none focus:outline-none bg-red-50 border border-gray-300 py-1 px-2 rounded-r-sm text-sm font-semibold hover:bg-gray-50">
                 Delete
-              </a>
+              </button>
             </div>
           </EventOnList>
         </div>
@@ -137,6 +137,15 @@ export default {
       }
     }
 
+    const removeEvent = async (event) => {
+      try {
+        await api.delete(`/events/${event.id}`);
+        organizedEvents.value = organizedEvents.value.filter(e => e.id !== event.id);
+      } catch (e) {
+        alert(`Cannot delete event ${event.name}`);
+      }
+    }
+
     fetchAttendedEvents(attendedPage.value);
     fetchOrganizedEvents(organizedPage.value);
 
@@ -149,6 +158,7 @@ export default {
       attendedEventsWithoutDesc,
       attendedPage,
       organizedPage,
+      removeEvent,
       links: [
         {
           label: 'Account',

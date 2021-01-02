@@ -10,9 +10,13 @@ export const setUser = (payload) => {
     api.defaults.headers.authorization = `Bearer ${payload.token}`;
 }
 
+export const logout = () => {
+    setUser({userId: null, token: null});
+}
+
 export function useUserProvider(initial = {userId: null, token: null}) {
     user = ref(initial);
-    provide(USER_CONTEXT, {user, setUser});
+    provide(USER_CONTEXT, {user, setUser, logout});
 }
 
 export function useUserContext() {
